@@ -20,7 +20,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'jacoco-android'
 apply plugin: 'realm-android'
 apply plugin: 'io.fabric'
-apply plugin: 'com.github.triplet.play'
 
 // App version
 ext.versionMajor = 1 // API Changes, adding big new feature, redesign the App
@@ -38,32 +37,6 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.1'
 
-    signingConfigs {
-        debug {
-            keyAlias keystoreProperties['keyAliasDebug']
-            keyPassword keystoreProperties['keyPasswordDebug']
-            storeFile file(keystoreProperties['storeFileDebug'])
-            storePassword keystoreProperties['storePasswordDebug']
-        }
-        relase {
-            storeFile file(keystoreProperties['storeFileRelease'])
-            storePassword keystoreProperties['storePasswordRelease']
-            keyAlias keystoreProperties['keyAliasRelease']
-            keyPassword keystoreProperties['keyPasswordRelease']
-        }
-    }
-
-	playAccountConfigs {
-        defaultAccountConfig {
-            serviceAccountEmail = keystoreProperties['serviceAccountEmail']
-            jsonFile = file(keystoreProperties['googlePlayKey'])
-        }
-    }
-
-    play {
-        track = 'beta'
-    }
-
     defaultConfig {
         applicationId "com.davidmiguel.gobees"
         minSdkVersion 19
@@ -77,7 +50,21 @@ android {
         buildConfigField 'String', 'COMMIT_HASH', "\"${getCommitHash()}\""
         buildConfigField 'String', 'BUILD_DATE', "\"${getBuildDate()}\""
         buildConfigField 'String', 'OPEN_WEATHER_MAP_API_KEY', keystoreProperties['OpenWeatherMapApiKey']
-        playAccountConfig = playAccountConfigs.defaultAccountConfig
+    }
+
+    signingConfigs {
+        debug {
+            keyAlias keystoreProperties['keyAliasDebug']
+            keyPassword keystoreProperties['keyPasswordDebug']
+            storeFile file(keystoreProperties['storeFileDebug'])
+            storePassword keystoreProperties['storePasswordDebug']
+        }
+        relase {
+            storeFile file(keystoreProperties['storeFileRelease'])
+            storePassword keystoreProperties['storePasswordRelease']
+            keyAlias keystoreProperties['keyAliasRelease']
+            keyPassword keystoreProperties['keyPasswordRelease']
+        }
     }
 
     buildTypes {
@@ -282,7 +269,7 @@ sonarqube {
  * Returns the number of the current build in Travis.
  */
 private static Integer getBuildNumber() {
-    return System.getenv()["TRAVIS_BUILD_NUMBER"] as Integer ?: 1
+    return System.getenv()["TRAVIS_BUILD_NUMBER"] as Integer ?: 0
 }
 
 /**
